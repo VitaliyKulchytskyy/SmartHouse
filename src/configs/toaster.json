@@ -1,0 +1,12 @@
+{
+    "duration": 2500,
+    "style": {
+        "border": "1px solid #896CFF",
+        "padding": "16px",
+        "color": "#000000"
+      },
+      "iconTheme": {
+        "primary": "#919BFF",
+        "secondary": "#FFFAEE"
+      }
+}

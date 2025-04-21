@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+::selection {
+    color: white;
+    background: #823EFF;
+}
