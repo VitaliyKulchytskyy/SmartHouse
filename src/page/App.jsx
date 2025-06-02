@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SettingsRemoteIcon from "@mui/icons-material/SettingsRemote";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import ScheduleIcon from "@mui/icons-material/Schedule";
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import SubjectIcon from "@mui/icons-material/Subject";
 import ExtensionIcon from "@mui/icons-material/Extension";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -41,14 +41,14 @@ const NAVIGATION = [
         icon: <AdminPanelSettingsIcon />,
     },
     {
-        segment: "logs",
-        title: "Logs",
+        segment: "timeline",
+        title: "Timeline Log",
         icon: <SubjectIcon />,
     },
     {
-        segment: "schedule",
-        title: "Schedule",
-        icon: <ScheduleIcon />,
+        segment: "scenarios",
+        title: "Scenarios",
+        icon: <PendingActionsIcon />,
     },
     {
         segment: "dev",
@@ -65,23 +65,19 @@ const NAVIGATION = [
         title: "Plugins",
     },
     {
-        segment: "plugin",
+        segment: "library",
         title: "Library",
         icon: <ExtensionIcon />,
     },
     {
-        segment: "community",
+        segment: "installed",
         title: "Installed",
         icon: <DownloadIcon />,
         children: [
-            {
-                segment: "plugin&id=mqtt",
-                title: "MQTT",
-            },
-            {
-                segment: "plugin&id=zigbee",
-                title: "ZigBee",
-            },
+            // {
+            //     segment: "plugin/debug",
+            //     title: "Debug"
+            // }
         ],
     },
 ];
@@ -116,6 +112,7 @@ App.propTypes = {
 export default function App(props) {
     const token = Cookies.get("token");
     const [session, setSession] = React.useState(demoSession);
+    const [nav, setNavigation] = React.useState(NAVIGATION);
     let navigateTo = useNavigate();
 
     useEffect(() => {
@@ -140,6 +137,46 @@ export default function App(props) {
             });
     }, []);
 
+    useEffect(() => {
+        axios.get("http://localhost:3001/plugin/list").then((resp) => {
+            const plugins = resp.data.payload.plugins;
+    
+            setNavigation((prevNav) => {
+                const updatedNav = [...prevNav];
+    
+                const installedIndex = updatedNav.findIndex(
+                    (item) => item.segment === "installed"
+                );
+    
+                if (installedIndex !== -1) {
+                    const installedItem = { ...updatedNav[installedIndex] };
+    
+                    const existingSegments = new Set(
+                        (installedItem.children || []).map((c) => c.segment)
+                    );
+    
+                    const newChildren = plugins
+                        .filter((plugin) => plugin.isInstalled) // ✅ Only installed plugins
+                        .map((plugin) => ({
+                            segment: `plugin/${plugin.name}`,
+                            title: plugin.name,
+                        }))
+                        .filter((pluginItem) => !existingSegments.has(pluginItem.segment));
+    
+                    installedItem.children = [
+                        ...(installedItem.children || []),
+                        ...newChildren,
+                    ];
+    
+                    updatedNav[installedIndex] = installedItem;
+                }
+    
+                return updatedNav;
+            });
+        });
+    }, []);    
+    
+
     const authentication = React.useMemo(() => {
         return {
             signOut: () => {
@@ -152,7 +189,7 @@ export default function App(props) {
 
     return (
         <ReactRouterAppProvider
-            navigation={NAVIGATION}
+            navigation={nav}
             branding={BRANDING}
             theme={theme}
             authentication={authentication}

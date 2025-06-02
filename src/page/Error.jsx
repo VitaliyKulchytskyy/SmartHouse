@@ -1,8 +1,11 @@
 import { Typography, Stack, Button } from "@mui/material";
 import GradientHorizontal from "../components/GradientHorizontal";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Error({ status="", message="" }) {
+    const navigate = useNavigate();
+
     return (
         <div>
             <Typography variant="h3" className="p-3">
@@ -16,9 +19,9 @@ export default function Error({ status="", message="" }) {
                 <Button
                     variant="outlined"
                     className="w-[128px]"
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/")}
                 >
-                    Go back
+                    Go to main
                 </Button>
             </Stack>
         </div>

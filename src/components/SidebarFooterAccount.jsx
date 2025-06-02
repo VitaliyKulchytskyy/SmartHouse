@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import MenuList from "@mui/material/MenuList";
+import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -38,23 +39,32 @@ function AccountSidebarPreview(props) {
     );
 }
 
-const account = [
-    {
-        id: 0,
-        name: "0",
-        role: "0",
-        image: "0",
-    },
-    {
-        id: 1,
-        name: "1",
-        role: "1",
-        image: "1",
-    },
-];
+// const account = [
+//     {
+//         id: 0,
+//         name: "",
+//         role: "",
+//         image: "",
+//         email: "",
+//     },
+//     {
+//         id: 1,
+//         name: "",
+//         role: "",
+//         image: "",
+//         email: "",
+//     },
+//     {
+//         id: 2,
+//         name: "",
+//         role: "",
+//         image: "",
+//         email: "",
+//     },
+// ];
 
 function SidebarFooterAccountPopover() {
-    const [accounts, setAccounts] = React.useState(account);
+    const [accounts, setAccounts] = React.useState([]);
     const token = Cookies.get("token");
 
     useEffect(() => {
@@ -72,6 +82,7 @@ function SidebarFooterAccountPopover() {
                     id: index, 
                     name: user.login,
                     role: user.roleName,
+                    email: user.email,
                     image: `${user.id}.jpg`,
                 }));
                 setAccounts(out);
@@ -81,9 +92,10 @@ function SidebarFooterAccountPopover() {
     return (
         <Stack direction="column">
             <Typography variant="body2" mx={2} mt={1}>
-                Family
+                Users
             </Typography>
-            <MenuList>
+            <MenuList
+                >
                 {accounts.map((account) => (
                     <MenuItem
                         key={account.id}
@@ -116,7 +128,7 @@ function SidebarFooterAccountPopover() {
                                 width: "100%",
                             }}
                             primary={account.name}
-                            secondary={account.role}
+                            secondary={account.email}
                             primaryTypographyProps={{ variant: "body2" }}
                             secondaryTypographyProps={{ variant: "caption" }}
                         />

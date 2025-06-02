@@ -15,6 +15,13 @@ import Control from "./page/Control.jsx";
 import { deepPurple, purple } from "@mui/material/colors";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material/styles";
+import Admin from "./page/Admin.jsx";
+import TimelineLogs from "./page/TimelineLogs.jsx";
+import DeveloperTools from "./page/DeveloperTools.jsx";
+import Scenarios from "./page/Scenarios.jsx";
+import Library from "./page/Library.jsx";
+import Plugin from "./page/Plugin.jsx";
+import InstalledPlugins from "./page/InstalledPlugins.jsx";
 
 // const router = createBrowserRouter([
 //     {
@@ -77,6 +84,39 @@ const router = createBrowserRouter([
                         path: "control",
                         Component: Control,
                     },
+                    {
+                        path: "admin",
+                        Component: Admin
+                    },
+                    {
+                        path: "timeline",
+                        Component: TimelineLogs
+                    },
+                    {
+                        path: "scenarios",
+                        Component: Scenarios
+                    },
+                    {
+                        path: "dev",
+                        Component: DeveloperTools
+                    },
+                    {
+                        path: "library",
+                        Component: Library
+                    },
+                    {
+                        path: "installed",
+                        Component: InstalledPlugins,
+                    },
+                    {
+                        path: "installed",
+                        children: [
+                            {
+                                path: "plugin/:name",
+                                Component: Plugin,
+                            }
+                        ]
+                    }
                 ],
             },
         ],
@@ -89,10 +129,10 @@ const router = createBrowserRouter([
         path: "/signup",
         element: <Registration />,
     },
-    // {
-    //     path: "/*",
-    //     element: <Error status="404" message="Page not found" />,
-    // },
+    {
+        path: "/*",
+        element: <Error status="404" message="Page not found" />,
+    },
 ]);
 
 const theme = createTheme({

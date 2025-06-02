@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 .editorconfig
 /public
+
+# Side task of cross-platform development using Tauri
+/src-tauri
