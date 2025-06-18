@@ -6,7 +6,7 @@ import {
     TextField,
     OutlinedInput,
     FormControl,
-    InputLabel
+    InputLabel,
 } from "@mui/material";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -36,11 +36,15 @@ function CommandHandler({
     );
 }
 
-function CommandInput({ command, pluginName, onResponse=(()=>{}) }) {
+function CommandInput({ command, pluginName, onResponse = () => {} }) {
     const [args, setArgs] = useState(Array(command.arguments.length).fill(""));
     const handleInputChange = (index, value, type) => {
         const updated = [...args];
-        updated[index] = (type === "number") ? Number.parseInt(value) : value;
+        if (type !== "object")
+            updated[index] = type === "number" ? Number.parseInt(value) : value;
+        else {
+            updated[index] = JSON.parse(value);
+        }
         setArgs(updated);
     };
 
@@ -55,24 +59,18 @@ function CommandInput({ command, pluginName, onResponse=(()=>{}) }) {
                         alignItems="flex-start"
                         direction="raw"
                     >
-                        {/* <Typography variant="subtitle1" className="pr-4">
-                            {arg.name}
-                        </Typography> */}
-                        {/* <OutlinedInput
-                            value={args[index]}
-                            label={arg.name}
-                            onChange={(e) =>
-                                handleInputChange(index, e.target.value)
-                            }
-                        /> */}
                         <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                            <InputLabel htmlFor="arg">
-                                {arg.name}
-                            </InputLabel>
+                            <InputLabel htmlFor="arg">{arg.name}</InputLabel>
                             <Input
                                 id="arg"
                                 type={arg.type}
-                                onChange={(e) => handleInputChange(index, e.target.value, arg.type)}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        index,
+                                        e.target.value,
+                                        arg.type,
+                                    )
+                                }
                             />
                         </FormControl>
                     </Stack>
@@ -88,7 +86,7 @@ function CommandInput({ command, pluginName, onResponse=(()=>{}) }) {
     );
 }
 
-function CommandInvoke({ command, pluginName, onResponse=(()=>{}) }) {
+function CommandInvoke({ command, pluginName, onResponse = () => {} }) {
     return (
         <Stack direction="row" spacing={4}>
             <Typography variant="h6">{command.name}</Typography>
@@ -101,7 +99,7 @@ function CommandInvoke({ command, pluginName, onResponse=(()=>{}) }) {
     );
 }
 
-export default function PluginControl({ name, onResponse=(()=>{}) }) {
+export default function PluginControl({ name, onResponse = () => {} }) {
     const [commands, setCommands] = useState([]);
 
     useEffect(() => {
@@ -117,9 +115,17 @@ export default function PluginControl({ name, onResponse=(()=>{}) }) {
         <Stack spacing={3} className="m-5">
             {commands.map((cmd) =>
                 cmd.arguments.length === 0 ? (
-                    <CommandInvoke command={cmd} pluginName={name} onResponse={onResponse} />
+                    <CommandInvoke
+                        command={cmd}
+                        pluginName={name}
+                        onResponse={onResponse}
+                    />
                 ) : (
-                    <CommandInput command={cmd} pluginName={name} onResponse={onResponse} />
+                    <CommandInput
+                        command={cmd}
+                        pluginName={name}
+                        onResponse={onResponse}
+                    />
                 ),
             )}
         </Stack>
